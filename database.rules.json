@@ -1,0 +1,26 @@
+
+{
+  "rules": {
+    "network_pulse": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$pulse_id": {
+        ".validate": "newData.hasChildren(['message', 'timestamp']) && newData.child('message').isString()"
+      }
+    },
+    "global_metrics": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "m_constant": {
+        ".validate": "newData.isNumber() && newData.val() >= 1.0"
+      },
+      "ca_index": {
+        ".validate": "newData.isNumber()"
+      }
+    },
+    "system_heartbeat": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

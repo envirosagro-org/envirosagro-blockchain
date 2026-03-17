@@ -1,0 +1,9 @@
+{
+  "name": "EnvirosAgro Blockchain",
+  "description": "A decentralized ecosystem for sustainable agriculture, real-time crop monitoring, and carbon credit tracking using blockchain transparency and EnvirosAgro AI-powered agro-analytics.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera",
+    "microphone"
+  ]
+}

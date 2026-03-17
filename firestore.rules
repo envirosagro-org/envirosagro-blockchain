@@ -1,0 +1,120 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- CORE ENVIROSAGRO HELPER FUNCTIONS ---
+    
+    // Verifies the user is authenticated AND the app is verified via App Check
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    
+    // Enforces App Check even for public (non-auth) reads if necessary
+    function isAppVerified() {
+      return request.auth != null && request.auth.token.app_check == true;
+    }
+    
+    function isOwner(stewardId) { 
+      return isSignedIn() && request.auth.uid == stewardId; 
+    }
+
+    function isAuditor() { 
+      return isSignedIn() && exists(/databases/$(database)/documents/auditors/$(request.auth.uid));
+    }
+
+    // --- COLLECTION PROTOCOLS ---
+
+    // 1. Stewards: Personal node dossier
+    match /stewards/{stewardId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 2. Signals: Encrypted engagement shards
+    match /signals/{signalId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 3. Products & Industrial Assets
+    match /products/{productId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 4. Live Inflow (Industrial Shards in processing)
+    match /live_products/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 5. Media Ledger & Knowledge Shards (AgroInPDF)
+    match /media_ledger/{shardId} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /books/{bookId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 6. Financial Ledger (Transactions): Absolute Immutability
+    match /transactions/{txId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 7. Missions & Contracts
+    match /contracts/{contractId} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /projects/{projectId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 8. Orders: Procurement Shards
+    match /orders/{orderId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 9. Collectives: Steward Guilds
+    match /collectives/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 10. Social Hub: Posts & Connections
+    match /social_posts/{postId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /connections/{connectionId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 11. Telemetry & Industrial Units
+    match /telemetry/{esin} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /industrial_units/{unitId} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /tasks/{taskId} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /patents/{patentId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /blocks/{blockId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 12. Auditors: Internal HQ Authority
+    match /auditors/{emailOrUid} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /{document=**} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}

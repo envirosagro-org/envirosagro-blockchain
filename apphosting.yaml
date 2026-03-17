@@ -1,0 +1,23 @@
+# EnvirosAgro™ Firebase App Hosting configuration
+# Version: 6.5.2 (Consensus)
+
+kind: AppStack
+apiVersion: v1
+
+# Industrial Build Specifications
+build:
+  buildCommand: npm run build
+  outputDirectory: dist
+
+# Optimized Runtime for High-Resonance Metrics
+run:
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+# Environment Sharding & Secret Management
+env:
+  - name: API_KEY
+    # Reference to the secret stored in Google Cloud Secret Manager
+    # integrated with Firebase App Hosting
+    secret: API_KEY

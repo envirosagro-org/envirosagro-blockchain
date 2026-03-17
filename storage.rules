@@ -1,0 +1,65 @@
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // --- CORE ENVIROSAGRO HELPER FUNCTIONS ---
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAppVerified() {
+      return request.auth != null && request.auth.token.app_check == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isVideo() {
+      return request.resource.contentType.matches('video/.*');
+    }
+
+    function isAudio() {
+      return request.resource.contentType.matches('audio/.*');
+    }
+
+    function isDocument() {
+      return request.resource.contentType.matches('application/pdf') || 
+             request.resource.contentType.matches('text/plain') ||
+             request.resource.contentType.matches('application/msword') ||
+             request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    }
+
+    // --- STORAGE PROTOCOLS ---
+
+    // 1. Stewards Directory: Avatars and Dossier elements
+    match /stewards/{userId}/{allPaths=**} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 2. Evidence Vault: Digital MRV and Field Proofs
+    match /evidence/{userId}/{fileName} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 3. Media Ledger: Cinema, Audio Waveforms, and Knowledge Shards
+    match /media_shards/{shardId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // 4. Industrial Ingest: Automated Telemetry Buffers
+    match /ingest/{esin}/{allPaths=**} {
+      allow read, write: if isSignedIn();
+    }
+    
+    match /{allPaths=**} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}
